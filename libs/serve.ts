@@ -29,7 +29,7 @@ export async function file(blob: Blob, { headers, ...init }: ResponseInit = {}) 
  * @param input Input text
  * @param init Response Init: status, headers etc.
  */
-export async function text(input: string, init?: ResponseInit) {
+export function text(input: string, init?: ResponseInit) {
     return file(new Blob([input], { type: 'text/plain; charset=utf-8' }), init);
 }
 
@@ -38,7 +38,7 @@ export async function text(input: string, init?: ResponseInit) {
  * @param input Input html text
  * @param init Response Init: status, headers etc.
  */
-export async function html(input: string, init?: ResponseInit) {
+export function html(input: string, init?: ResponseInit) {
     return file(new Blob([input], { type: 'text/html; charset=utf-8' }), init);
 }
 
@@ -47,21 +47,21 @@ export async function html(input: string, init?: ResponseInit) {
  * @param data Input data, will be convert to json string
  * @param init Response Init: status, headers etc.
  */
-export async function json(data: {}, init?: ResponseInit) {
+export function json(data: unknown, init?: ResponseInit) {
     return file(new Blob([JSON.stringify(data)], { type: 'application/json; charset=utf-8' }), init);
 }
 
 /**
  * Default Not-Found Handler
  */
-async function defaultNotFound() {
+function defaultNotFound() {
     return html('404', { status: 404 });
 }
 
 /**
  * Default Server-Internal-Error Handler
  */
-async function defaultInternalError() {
+function defaultInternalError() {
     return html('500', { status: 500 });
 }
 
@@ -70,7 +70,7 @@ async function defaultInternalError() {
  * @param request Original Request
  * @param routes Routes
  */
-async function handleRequest(request: Request, routes: Routes): Promise<Response> {
+function handleRequest(request: Request, routes: Routes): Promise<Response> {
     const { pathname, search } = new URL(request.url);
     const fullPath = pathname + search;
     console.log('fullPath: ', fullPath);
@@ -96,11 +96,20 @@ async function handleRequest(request: Request, routes: Routes): Promise<Response
 }
 
 /**
+ * TODO: Remove it while Deno updated FetchEvent type
+ */
+interface FetchEvent extends Event {
+    readonly request: Request;
+    respondWith(res: Response | Promise<Response>): void;
+}
+
+/**
  * Start serving for Deno Deploy
  * @param routes
  */
 export function serve(routes: Routes) {
-    addEventListener('fetch', (event: any) => {
-        event.respondWith(handleRequest(event.request, routes));
+    addEventListener('fetch', event => {
+        const e = event as FetchEvent;
+        e.respondWith(handleRequest(e.request, routes));
     });
 }

@@ -1,11 +1,19 @@
 // run `deployctl run main.ts` first, then test
 
-import { assertEquals } from 'https://deno.land/std@0.91.0/testing/asserts.ts';
+import { assertEquals } from './deps.ts';
+import { startServer } from './testServer.ts';
 
 const API = 'http://localhost:8080/ping';
 
+// start server
+const stopServer = await startServer();
+
+addEventListener('unload', async () => {
+    await stopServer();
+});
+
 Deno.test('html', async () => {
-    const result = await fetch(`${API}`).then(res => res.text());
+    const result = await fetch(`${API}/html`).then(res => res.text());
     assertEquals(result, '<h1>Hello world!</h1>');
 });
 

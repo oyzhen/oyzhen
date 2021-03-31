@@ -1,0 +1,27 @@
+name: ci
+
+on: [push, pull_request]
+
+jobs:
+    build:
+        name: ${{ matrix.kind }} ${{ matrix.os }}
+        runs-on: ${{ matrix.os }}
+        strategy:
+            matrix:
+                os: [macOS-latest, ubuntu-latest]
+
+        steps:
+            - uses: actions/checkout@v2
+            - name: Setup Deno
+              uses: denolib/setup-deno@master
+              with:
+                  deno-version: 1.8.2
+
+            - name: Lint
+              run: deno lint --unstable --ignore=prettier.config.js
+
+            - name: Setup Deno Deploy
+              run: deno install --allow-read --allow-write --allow-env --allow-net --allow-run --no-check -f https://deno.land/x/deploy/deployctl.ts
+
+            - name: Tests
+              run: deno test -A --unstable test.ts
