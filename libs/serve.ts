@@ -1,3 +1,5 @@
+import createBlob from './createBlob.ts';
+
 /**
  * Request Handler
  */
@@ -30,7 +32,7 @@ export async function file(blob: Blob, { headers, ...init }: ResponseInit = {}) 
  * @param init Response Init: status, headers etc.
  */
 export function text(input: string, init?: ResponseInit) {
-    return file(new Blob([input], { type: 'text/plain; charset=utf-8' }), init);
+    return file(createBlob([input], { type: 'text/plain; charset=utf-8' }), init);
 }
 
 /**
@@ -39,7 +41,7 @@ export function text(input: string, init?: ResponseInit) {
  * @param init Response Init: status, headers etc.
  */
 export function html(input: string, init?: ResponseInit) {
-    return file(new Blob([input], { type: 'text/html; charset=utf-8' }), init);
+    return file(createBlob([input], { type: 'text/html; charset=utf-8' }), init);
 }
 
 /**
@@ -48,7 +50,7 @@ export function html(input: string, init?: ResponseInit) {
  * @param init Response Init: status, headers etc.
  */
 export function json(data: unknown, init?: ResponseInit) {
-    return file(new Blob([JSON.stringify(data)], { type: 'application/json; charset=utf-8' }), init);
+    return file(createBlob([JSON.stringify(data)], { type: 'application/json; charset=utf-8' }), init);
 }
 
 /**

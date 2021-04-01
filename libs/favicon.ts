@@ -2,6 +2,7 @@
 
 // const faviconFile = await Deno.readFile(join(import.meta.url, '../assets/favicon.ico'));
 
+import createBlob from './createBlob.ts';
 import hex2buf from './hex2buf.ts';
 
 const faviconHex =
@@ -9,4 +10,4 @@ const faviconHex =
 
 const faviconBuf = hex2buf(faviconHex);
 
-export default new Blob([faviconBuf], { type: 'image/x-icon' });
+export default createBlob([faviconBuf], { type: 'image/x-icon' });
