@@ -1,5 +1,3 @@
-// run `deployctl run main.ts` first, then test
-
 import { assertEquals } from './deps.ts';
 import { startServer } from './testServer.ts';
 
